@@ -2,26 +2,35 @@ package trevor.RAP.bank;
 
 import java.util.ArrayList;
 
+
 import java.util.Scanner;
 
-//import trevor.RAP.BankDAO.ClientDAO;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import trevor.RAP.BankDAO.ClientDAO1;
 import trevor.RAP.BankDAO.ClientDAOimpl;
 import trevor.RAP.BankDAO.EmployeeDAO;
 import trevor.RAP.BankDAO.EmployeeDAOImpl;
 import trevor.RAP.Models.client;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class view extends main{
 	
+	private static final Logger LOG = LogManager.getLogger(view.class);
+	
 	public static void welcome() {
+		LOG.trace("start welcome");
 		System.out.println("Welcome to trevors Bank");
 		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 		System.out.println("Would you like to \n 1)Log in as client \n 2)Log in as employee \n 3)Create an account");
+		LOG.trace("end welcome");
 	}
 	
 	public static void viewClientAccountChecking() {
-		
+		LOG.trace("start view checking");
 		Scanner scanner2 = new Scanner(System.in);
 		EmployeeDAO employeeDAO =new EmployeeDAOImpl();
 			
@@ -31,10 +40,11 @@ public class view extends main{
 		int gotchecking = employeeDAO.getClientAccountChecking(accountNumber);
 
 		System.out.println("Checking account balance: $" + gotchecking);
-		
+		LOG.trace("end view checking");
 	}
 	
 	public static void viewClientAccountSaving() {
+		LOG.trace("start view savings");
 		Scanner scanner2 = new Scanner(System.in);
 		EmployeeDAO employeeDAO =new EmployeeDAOImpl();
 		
@@ -49,12 +59,12 @@ public class view extends main{
 		int gotsaving = employeeDAO.getClientAccountSaving(accountNumber);
 
 		System.out.println("Savings account balance: $" + gotsaving);
-
+		LOG.trace("end view savings");
 		
 	}
 	
 	public static void depositInChecking() {
-
+		LOG.trace("start checking deposit");
 		Scanner scanner = new Scanner(System.in);
 		ClientDAO1 clientDAO1 =new ClientDAOimpl();
 		
@@ -74,8 +84,9 @@ public class view extends main{
 			
 		int dep = scanner.nextInt();
 			
-		if (dep <= 0 ) {
+		if (dep < 0 ) {
 			System.out.println("invalid transaction");
+			LOG.error("deposited negative number in checkings account");
 		}
 		else {
 			int deposit = clientDAO1.depositInChecking(accountNumber,(dep + gotAccountsChecking) );
@@ -89,10 +100,11 @@ public class view extends main{
 			}
 		}
 	}
+		LOG.trace("end checking deposit");
 }
 	
 	public static void depositInSaving() {
-	
+		LOG.trace("start savings deposit");
 		Scanner scanner = new Scanner(System.in);
 		ClientDAO1 clientDAO1 =new ClientDAOimpl();
 		System.out.println("enter account number");
@@ -106,8 +118,9 @@ public class view extends main{
 		
 		int dep = scanner.nextInt();
 			
-		if (dep<= 0) {
+		if (dep < 0) {
 			System.out.println("invalid transaction");
+			LOG.error("deposited negative number in savings account");
 		}
 		else {
 			int deposit = clientDAO1.depositInSavings(accountNumber,(dep + gotAccountsSaving) );
@@ -120,8 +133,10 @@ public class view extends main{
 				System.out.println(client1);
 			}
 		}
+		LOG.trace("end savings deposit");
 	}
 	public static void withdrawFromChecking() {
+		LOG.trace("start withdraw from checking");
 		Scanner scanner = new Scanner(System.in);
 		ClientDAO1 clientDAO1 = new ClientDAOimpl();
 		System.out.println("enter account number");
@@ -135,9 +150,11 @@ public class view extends main{
 
 		int withdraw = scanner.nextInt();
 		if (withdraw > gotAccountsChecking) {
+			LOG.error("tried to withdraw more than is in the account");
 			System.out.println("cannot withdraw more then is in the account");
 		}
 		else if(withdraw <= 0) {
+			LOG.error("tried to withdraw a negative number or 0 from checking");
 			System.out.println("must withdraw a positive value");
 		}	
 		else {
@@ -150,9 +167,11 @@ public class view extends main{
 			System.out.println(client1);
 		}
 	}
+		LOG.trace("end withdraw from checking");
 }
 	
 	public static void withdrawFromSavings() {
+		LOG.trace("start withdraw from savings");
 		Scanner scanner = new Scanner(System.in);
 		ClientDAO1 clientDAO1 = new ClientDAOimpl();
 		
@@ -170,6 +189,7 @@ public class view extends main{
 			System.out.println("cannot withdraw more then is in the account");
 		}
 		else if(withdraw <= 0) {
+			LOG.error("tried to withdraw negativ number or 0 from savings");
 			System.out.println("must withdraw a positive value");
 		}	
 		else {
@@ -181,10 +201,11 @@ public class view extends main{
 			System.out.println(client1);
 		}
 	}
+		LOG.trace("end withdraw from savings");
 }
 	
 	public static void transferCheckingToChecking() {
-		
+		LOG.trace("start checking to checking transfer");
 		ClientDAO1 clientDAO1 = new ClientDAOimpl();
 		Scanner scanner = new Scanner(System.in);
 		System.out.println("enter amount to transfer");
@@ -202,6 +223,7 @@ public class view extends main{
 		int gotRecieversChecking = clientDAO1.getClientAccountChecking(accountNumberOfReciever);
 		
 		if (transfer <= 0  && transfer <= gotSendersChecking) {
+			LOG.error("transfer was less than or equall to 0 or more money than they had checking to checking");
 			System.out.println("invalid transaction");
 		}
 		else {
@@ -222,10 +244,11 @@ public class view extends main{
 			System.out.println(client1);
 		}
 	}
+		LOG.trace("end checking to checking transfer");
 }
 	
 	public static void transferCheckingToSaving() {
-		
+		LOG.trace("start tranfer checking to savings");
 		ClientDAO1 clientDAO1 = new ClientDAOimpl();
 		Scanner scanner = new Scanner(System.in);
 		System.out.println("enter amount to transfer");
@@ -243,6 +266,7 @@ public class view extends main{
 		int gotRecieversSavings = clientDAO1.getClientAccountSaving(accountNumberOfReciever);
 		
 		if (transfer <= 0  && transfer <= gotSendersChecking) {
+			LOG.error("transfer was less than or equall to 0 or more money than they had checking to saving");
 			System.out.println("invalid transaction");
 		}
 		else {
@@ -263,10 +287,11 @@ public class view extends main{
 			System.out.println(client1);
 		}
 	}
+		LOG.trace("end tranfer checking to savings");
 }
 	
 	public static void transferSavingToSaving() {
-		
+		LOG.trace("start tranfer saving to savings");
 		ClientDAO1 clientDAO1 = new ClientDAOimpl();
 		Scanner scanner = new Scanner(System.in);
 		System.out.println("enter amount to transfer");
@@ -284,6 +309,7 @@ public class view extends main{
 		int gotRecieversSavings = clientDAO1.getClientAccountSaving(accountNumberOfReciever);
 		
 		if (transfer <= 0  && transfer <= gotSendersSavings) {
+			LOG.error("transfer was less than or equall to 0 or more money than they had saving to saving");
 			System.out.println("invalid transaction");
 		}
 		else {
@@ -304,10 +330,11 @@ public class view extends main{
 			System.out.println(client1);
 		}
 	}
+		LOG.trace("end tranfer saving to savings");
 }
 	
 	public static void transferSavingToChecking() {
-		
+		LOG.trace("start tranfer saving to checking");
 		ClientDAO1 clientDAO1 = new ClientDAOimpl();
 		Scanner scanner = new Scanner(System.in);
 		System.out.println("enter amount to transfer");
@@ -325,6 +352,7 @@ public class view extends main{
 		int gotRecieversChecking = clientDAO1.getClientAccountChecking(accountNumberOfReciever);
 		
 		if (transfer <= 0  && transfer <= gotSendersSavings) {
+			LOG.error("transfer was less than or equall to 0 or more money than they had saving to checking");
 			System.out.println("invalid transaction");
 		}
 		else {
@@ -344,11 +372,12 @@ public class view extends main{
 		for (client client1 : Clients2) {
 			System.out.println(client1);
 		}
-		}
 	}
+		LOG.trace("end tranfer saving to checking");
+}
 	
 	public static void createAccount() {
-		
+		LOG.trace("start create account");
 		System.out.println("Please enter the following information");
 		ClientDAO1 clientDAO1 =new ClientDAOimpl();
 		Scanner scanner = new Scanner(System.in);
@@ -392,10 +421,11 @@ public class view extends main{
 		for (client client1 : Clients2) {
 		System.out.println(client1);
 		}
+		LOG.trace("end create account");
 	}
 
 	public static boolean logIn() {
-		
+		LOG.trace("start login");
 		Scanner scanner = new Scanner(System.in);
 		System.out.println("enter username");
 		String username = scanner.nextLine();
@@ -408,18 +438,21 @@ public class view extends main{
 
 		if (Clients1.contains(username) && Clients1.contains(password)){
 			System.out.print("hello " + username);
+			LOG.trace("end login");
 			return true;
 			
 		}
 		else {
 			System.out.println("username or password invalid");		
 			System.exit(0);
+			LOG.error("error logging in client");
 			return false;
 		}
+			
 	}
 	
 	public static boolean employeeLogIn() {
-		
+		LOG.trace("start employee login");
 		Scanner scanner = new Scanner(System.in);
 		System.out.println("enter username");
 		String username = scanner.nextLine();
@@ -432,17 +465,19 @@ public class view extends main{
 
 		if (Clients1.contains(username) && Clients1.contains(password)){
 			System.out.print("hello employee " + username + "\n");
+			LOG.trace("end employee login");
 			return true;
 		}
 		else {
 			System.out.println("username or password invalid");
-			System.exit(0);
+			LOG.error("error logging in employee");
+			System.exit(0);		
 			return false;
 		}
 	}
 	
 	public static boolean CheckApprovalStatus() {
-		
+		LOG.trace("start check approval");
 		EmployeeDAO employeeDAO =new EmployeeDAOImpl();
 		
 		System.out.println("enter account number");
@@ -451,11 +486,12 @@ public class view extends main{
 		
 		boolean approvalCheck = employeeDAO.getApproval(accountNumber);
 		System.out.println(approvalCheck);
-		
+		LOG.trace("end check approval");
 		return approvalCheck;
 	}
 	
 	public static void getClient() {
+		LOG.trace("start get client");
 		Scanner scanner = new Scanner(System.in);
 		EmployeeDAO employeeDAO =new EmployeeDAOImpl();
 		
@@ -474,11 +510,12 @@ public class view extends main{
 		System.out.println("Checking account balance: " + gotClientChecking);
 		System.out.println("Saving account balance:" + gotClientSavings);
 		System.out.println("Approval: " + gotApproval);
-
+		
+		LOG.trace("end get client");
 	}
 	
 	public static void getAllClients() {
-		
+		LOG.trace("start get all clients");
 		EmployeeDAO employeeDAO =new EmployeeDAOImpl();
 		
 		ArrayList<client> Clients =  employeeDAO.getAllClients();
@@ -486,10 +523,11 @@ public class view extends main{
 		for (client client : Clients) {
 			System.out.println(client);
 		}
+		LOG.trace("end get all clients");
 	}
 	
 	public static void getAllClientAccounts() {
-		
+		LOG.trace("start get all client accounts");
 		EmployeeDAO employeeDAO =new EmployeeDAOImpl();
 		
 		ArrayList<client> Clients =  employeeDAO.getAllClientAccounts();
@@ -497,10 +535,11 @@ public class view extends main{
 		for (client client : Clients) {
 			System.out.println(client);
 		}
+		LOG.trace("end get all client accounts");
 	}
 	
 	public static void getAllClientTransactions() {
-		
+		LOG.trace("start get all client transactons");
 		EmployeeDAO employeeDAO =new EmployeeDAOImpl();
 		
 		ArrayList<client> Clients =  employeeDAO.getAllTransactions();
@@ -508,10 +547,11 @@ public class view extends main{
 		for (client client : Clients) {
 			System.out.println(client);
 		}
+		LOG.trace("end get all client transactions");
 	}
 	
 	public static void setApproval() {
-		
+		LOG.trace("start set approval");
 		Scanner scanner = new Scanner(System.in);
 		EmployeeDAO employeeDAO =new EmployeeDAOImpl();
 		
@@ -528,6 +568,7 @@ public class view extends main{
 		for (client client : Clients) {
 			System.out.println(client);
 		}
+		LOG.trace("end set approval");
 	}
 }
 	
